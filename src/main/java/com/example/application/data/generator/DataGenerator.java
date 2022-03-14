@@ -52,10 +52,9 @@ public class DataGenerator {
             contactGenerator.setData(Contact::setEmail, DataType.EMAIL);
 
             Random r = new Random(seed);
-            List<Contact> contacts = contactGenerator.create(50, seed).stream().map(contact -> {
+            List<Contact> contacts = contactGenerator.create(50, seed).stream().peek(contact -> {
                 contact.setCompany(companies.get(r.nextInt(companies.size())));
                 contact.setStatus(statuses.get(r.nextInt(statuses.size())));
-                return contact;
             }).collect(Collectors.toList());
 
             contactRepository.saveAll(contacts);
