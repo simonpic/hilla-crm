@@ -10,12 +10,13 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 import dev.hilla.Endpoint;
 import dev.hilla.Nonnull;
 
+import javax.annotation.security.PermitAll;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 @Endpoint
-@AnonymousAllowed
+@PermitAll
 public class CrmEndpoint {
 
     private final ContactRepository contactRepository;

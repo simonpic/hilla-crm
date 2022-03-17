@@ -5,11 +5,26 @@ import '@vaadin/text-field'
 import '@vaadin/button'
 import '@vaadin/grid'
 import '@vaadin/grid/vaadin-grid-column'
+import '@vaadin/notification'
 import './contact-form'
 import { listViewStore } from 'Frontend/stores/list-view-store';
+import { uiStore } from 'Frontend/stores/app-store';
 
 @customElement('list-view')
 export class ListView extends View {
+
+  constructor() {
+    super();
+    super.connectedCallback();
+    this.autorun(() => {
+      if (listViewStore.selectedContact) {
+        this.classList.add("editing");
+      } else {
+        this.classList.remove("editing");
+      }
+    });
+  }
+
   render() {
     return html`
       <div class="toolbar flex gap-s">
@@ -19,7 +34,7 @@ export class ListView extends View {
           @input=${this.updateFilter}
           clear-button-visible>
         </vaadin-text-field>
-        <vaadin-button>Add Contact</vaadin-button>
+        <vaadin-button @click=${listViewStore.editNew}>Add Contact</vaadin-button>
       </div>
       <div class="content flex gap-m h-full">
         <vaadin-grid 
@@ -34,8 +49,21 @@ export class ListView extends View {
           <vaadin-grid-column path="status.name" header="Status" auto-width></vaadin-grid-column>
           <vaadin-grid-column path="company.name" header="Company" auto-width></vaadin-grid-column>
         </vaadin-grid>
-        <contact-form class="flex flex-col gap-s"></contact-form>
+
+        <contact-form 
+          class="flex flex-col gap-s"
+          ?hidden=${true}
+          >
+        </contact-form>
       </div>
+
+      <vaadin-notification
+        theme=${uiStore.message.error ? 'error' : 'contrast'}
+        position="bottom-start"
+        .opened=${uiStore.message.open}
+        .renderer=${(root: HTMLElement) =>
+          (root.textContent = uiStore.message.text)}>
+      </vaadin-notification>
     `
   }
 

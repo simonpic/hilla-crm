@@ -1,4 +1,7 @@
 {
     "lit-plugin.strict": true,
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "disabled",
+    "emmet.includeLanguages": {
+        "typescript": "html"
+    }
 }
