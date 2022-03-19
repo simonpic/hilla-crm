@@ -3,6 +3,7 @@ import {
     login as serverLogin,
     logout as serverLogout,
  } from "@hilla/frontend";
+import { ConnectionState, ConnectionStateStore } from "@vaadin/common-frontend";
 import { crmStore } from "./app-store";
 
 class Message {
@@ -14,7 +15,16 @@ export class UiStore {
     loggedIn = true;
 
     constructor() {
-        makeAutoObservable(this, {}, { autoBind: true});
+        makeAutoObservable(
+            this, 
+            {
+                connectionStateListener: false,
+                connectionStateStore: false,
+                setupOfflineListener: false,
+            }, 
+            { autoBind: true}
+        );
+        this.setupOfflineListener();
     }
 
     async login(username: string, password: string) {
@@ -53,5 +63,34 @@ export class UiStore {
     private showMessage(text: string, error: boolean) {
         this.message = new Message(text, error, true);
         setTimeout(() => this.clearMessage(), 5000);
+    }
+
+    offline = false;
+    connectionStateStore?: ConnectionStateStore;
+
+    connectionStateListener = () => {
+        this.setOffline(
+            this.connectionStateStore?.state === ConnectionState.CONNECTION_LOST
+        );
+    };
+
+    setupOfflineListener() {
+        const $wnd = window as any;
+        
+        if ($wnd.Vaadin.connectionState) {
+            this.connectionStateStore = $wnd.Vaadin
+                    .connectionState as ConnectionStateStore;
+            this.connectionStateStore.addStateChangeListener(
+                this.connectionStateListener
+            );
+            this.connectionStateListener();
+        }
+    }
+
+    private setOffline(offline: boolean) {
+        if (this.offline && !offline) {
+            crmStore.initFromServer();
+        }
+        this.offline = offline;
     }
 }

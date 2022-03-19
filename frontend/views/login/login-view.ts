@@ -1,9 +1,10 @@
-import { uiStore } from "Frontend/stores/app-store";
-import { html } from "lit";
+import { html, nothing } from "lit";
 import { customElement, state } from "lit/decorators";
-import { View } from "../view";
 import { LoginFormLoginEvent } from "@vaadin/login/vaadin-login-form";
 import '@vaadin/login/vaadin-login-form'
+import { uiStore } from "Frontend/stores/app-store";
+import { View } from "../view";
+
 
 @customElement('login-view')
 export class LoginView extends View {
@@ -22,8 +23,13 @@ export class LoginView extends View {
             <vaadin-login-form
                 no-forgot-password
                 @login=${this.login}
-                .error=${this.error}>
+                .error=${this.error}
+                ?disabled=${uiStore.offline}>
             </vaadin-login-form>
+            ${uiStore.offline
+                ? html` <b>You are offline. Login is only available while online.</b> `
+                : nothing
+            }
         `
     }
 

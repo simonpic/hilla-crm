@@ -6,7 +6,7 @@ import '@vaadin/combo-box'
 import '@vaadin/text-field'
 import { Binder, field } from "@hilla/form";
 import ContactModel from "Frontend/generated/com/example/application/data/entity/ContactModel";
-import { crmStore } from "Frontend/stores/app-store";
+import { crmStore, uiStore } from "Frontend/stores/app-store";
 import { listViewStore } from "Frontend/stores/list-view-store";
 
 @customElement('contact-form')
@@ -30,34 +30,45 @@ export class ContactForm extends View {
         return html`
             <vaadin-text-field 
                 label="First name"
-                ${field(model.firstName)}>
+                ${field(model.firstName)}
+                ?disabled=${uiStore.offline}>
             </vaadin-text-field>
             <vaadin-text-field 
                 label="Last name"
-                ${field(model.lastName)}>
+                ${field(model.lastName)}
+                ?disabled=${uiStore.offline}>
             </vaadin-text-field>
             <vaadin-text-field 
                 label="Email"
-                ${field(model.email)}>
+                ${field(model.email)}
+                ?disabled=${uiStore.offline}>
             </vaadin-text-field>
             <vaadin-combo-box 
                 label="Status"
                 ${field(model.status)}
                 item-label-path="name"
-                .items=${crmStore.statuses}>
+                .items=${crmStore.statuses}
+                ?disabled=${uiStore.offline}>
             </vaadin-combo-box>
             <vaadin-combo-box 
                 label="Company"
                 ${field(model.company)}
                 item-label-path="name"
-                .items=${crmStore.companies}>
+                .items=${crmStore.companies}
+                ?disabled=${uiStore.offline}>
             </vaadin-combo-box>
 
             <div class="flex gap-s">
-                <vaadin-button theme="primary" @click=${this.save}>
+                <vaadin-button 
+                    theme="primary" 
+                    @click=${this.save}
+                    ?disabled=${this.binder.invalid || uiStore.offline}>
                     ${this.binder.value.id ? 'Save' : 'Create'}
                 </vaadin-button>
-                <vaadin-button theme="error" @click=${listViewStore.delete}>
+                <vaadin-button 
+                    theme="error" 
+                    @click=${listViewStore.delete}
+                    ?disabled=${uiStore.offline}>
                     Delete
                 </vaadin-button>
                 <vaadin-button 

@@ -4,6 +4,7 @@ import '@vaadin/app-layout'
 import '@vaadin/app-layout/vaadin-drawer-toggle'
 import { Layout } from "Frontend/views/view";
 import { views } from "Frontend/routes";
+import { uiStore } from "./stores/app-store";
 
 @customElement('main-layout')
 export class MainLayout extends Layout {
@@ -18,7 +19,12 @@ export class MainLayout extends Layout {
                 <header slot="navbar" class="w-full flex items-center px-m">
                     <vaadin-drawer-toggle></vaadin-drawer-toggle>
                     <h1 class="text-l m-m">Hilla CRM</h1>
-                    <a href="/logout" class="ms-auto">Log out</a>
+                    <a 
+                        href="/logout" 
+                        class="ms-auto"
+                        ?hidden=${uiStore.offline}>
+                        Log out
+                    </a>
                 </header>
 
                 <div slot="drawer">
